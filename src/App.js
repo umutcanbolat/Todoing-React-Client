@@ -13,6 +13,8 @@ class App extends Component {
     this.state = {
       data: []
     };
+
+    this.componentDidMount = this.componentDidMount.bind(this);
   }
 
   componentDidMount () {
@@ -22,13 +24,13 @@ class App extends Component {
         this.setState({
           data: res.data
         })
-      })
+      });
     }
 
   render() {
     return (
       <div>
-        <Header />
+        <Header changeData={this.componentDidMount} />
         <TodoLists data={this.state.data}/>
       </div>
     );

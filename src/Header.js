@@ -8,7 +8,7 @@ export class Header extends Component {
         <h1>Todoing Todo-List App</h1>
           <p>Type below to create a new todo list!</p>
             <div className="col-sm-4 offset-4">
-              <TodoListForm />
+              <TodoListForm changeData={this.props.changeData}/>
             </div>
       </div>
     );
@@ -30,25 +30,35 @@ class TodoListForm extends Component {
 
   addList (e) {
     const apiUrl = 'http://localhost:8080/addTodoList/';
-      e.preventDefault()
+    e.preventDefault();
 
-      var params = {
-          listName: this.state.text
-      };
+    var params = {
+        listName: this.state.text
+    };
 
-      var formData = new FormData();
+    var formData = new FormData();
 
-      for (var k in params) {
-          formData.append(k, params[k]);
+    for (var k in params) {
+        formData.append(k, params[k]);
+    }
+
+    var request = {
+        method: 'POST',
+        body: formData
+    };
+    fetch(apiUrl, request).then(response => {
+      if (response.ok) {
+        this.setState({
+          text: ''
+        })
+        this.props.changeData();
       }
 
-      var request = {
-          method: 'POST',
-          body: formData
-      };
+    });
 
-      fetch(apiUrl, request);
-    }
+
+
+  }
 
   changeInput (e) {
     this.setState({
@@ -60,7 +70,7 @@ class TodoListForm extends Component {
     return(
       <form onSubmit={this.addList}>
         <div className="form-group">
-          <input type="text" className="form-control" placeholder="Name of the list" onChange={this.changeInput}/>
+          <input type="text" className="form-control" placeholder="Name of the list" onChange={this.changeInput} value={this.state.text} />
         </div>
         <button type="submit" className="btn btn-primary">Create</button>
       </form>
