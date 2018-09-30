@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import http from 'axios';
-import logo from './logo.svg';
 import './main.css';
 import { Header } from "./Header";
 import { TodoLists } from "./TodoLists";
@@ -19,13 +17,15 @@ class App extends Component {
 
   componentDidMount () {
     const apiUrl = 'http://localhost:8080/getTodoListAll/';
-      http.get(apiUrl).then(res => {
 
-        this.setState({
-          data: res.data
-        })
-      });
-    }
+    fetch(apiUrl)
+      .then((response) => response.json())
+        .then((responseJson) => {
+          this.setState({
+            data: responseJson
+          });
+        });
+  }
 
   render() {
     return (

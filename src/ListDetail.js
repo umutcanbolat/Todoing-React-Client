@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {TodoItem} from './TodoItem';
-import http from 'axios';
 
 export class ListDetail extends Component{
   constructor (props) {
@@ -20,18 +19,13 @@ export class ListDetail extends Component{
     updateListData (listId){
       const apiUrl = 'http://localhost:8080/getAllItemsByListId';
 
-        fetch(apiUrl + "/" +listId)
-          .then((response) => response.json())
-      .then((responseJson) => {
-          console.log(responseJson);
-        this.setState({
-          data: responseJson
-        });
-
-      })
-
-
-
+      fetch(apiUrl + "/" +listId)
+        .then((response) => response.json())
+          .then((responseJson) => {
+            this.setState({
+              data: responseJson
+            });
+          });
     }
 
   deleteList(e){
@@ -50,9 +44,8 @@ export class ListDetail extends Component{
 
     let listId = this.props.list.listId;
     let listName = this.props.list.listName;
-    console.log(listId);
     const items = this.state.data.map(item => {
-      return <TodoItem item={item} />
+      return <TodoItem item={item} changeData={this.updateListData} />
     });
 
     return (
@@ -63,7 +56,7 @@ export class ListDetail extends Component{
         <p>Click on the items to mark them as done or undone</p>
 
 
-        <table class="table table-striped">
+        <table className="table table-striped">
           <thead>
             <tr>
               <th scope="col">Name</th>
@@ -123,22 +116,17 @@ class AddItemForm extends Component{
     };
     fetch(apiUrl, request).then(response => {
       if (response.ok) {
-        this.state = {
+        this.setState({
           itemName: "",
           list: this.props.listId,
           itemDesc: "",
           deadline: "",
           dependencies: []
-        };
+        });
         this.props.changeData(this.state.list);
       }
 
     });
-
-
-
-
-
   }
 
   handleInputChange(e){
@@ -146,16 +134,13 @@ class AddItemForm extends Component{
       this.setState({
         [target.name]: target.value
       });
-      console.log(this.state.itemName);
-      console.log(this.state.itemDesc);
-      console.log(this.state.list);
-      console.log(this.state.deadline);
+
     }
 
   render(){
     return(
       <form onSubmit={this.addItem}>
-      <table class="table table-striped">
+      <table className="table table-striped">
         <thead>
           <tr>
             <th scope="col">Name</th>
@@ -168,9 +153,9 @@ class AddItemForm extends Component{
         <tbody>
         <tr>
 
-          <td><input type="text" className="form-control form-control-sm" name="itemName" placeholder="name" onChange={this.handleInputChange} /></td>
-          <td><input type="text" className="form-control form-control-sm" name="itemDesc" placeholder="description" onChange={this.handleInputChange} /></td>
-          <td><input type="text" className="form-control form-control-sm" name="deadline" placeholder="23-01-2019" onChange={this.handleInputChange} /></td>
+          <td><input type="text" className="form-control form-control-sm" name="itemName" placeholder="name" onChange={this.handleInputChange} value={this.state.itemName} /></td>
+          <td><input type="text" className="form-control form-control-sm" name="itemDesc" placeholder="description" onChange={this.handleInputChange} value={this.state.itemDesc} /></td>
+          <td><input type="text" className="form-control form-control-sm" name="deadline" placeholder="23-01-2019" onChange={this.handleInputChange} value={this.state.deadline} /></td>
           <td> add dependency</td>
           <td><button type="submit" className="btn btn-primary btn-sm">Add</button>  </td>
 

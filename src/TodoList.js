@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 
 export class TodoList extends Component{
-  constructor (props) {
-    super(props);
-
-  }
   render(){
     const id = this.props.list.listId;
     return (

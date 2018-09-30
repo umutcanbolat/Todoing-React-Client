@@ -1,7 +1,4 @@
 .disabled {
   text-decoration: line-through;
-}
-
-.disabled:hover {
-    text-decoration: line-through;
+  color: #af6969;
 }
