@@ -19,7 +19,7 @@ class TodoListForm extends Component {
   constructor (props) {
     super(props);
     this.state = {
-      text: ''
+      text: ""
     };
 
     this.addList = this.addList.bind(this);

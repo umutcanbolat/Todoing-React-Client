@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import http from 'axios'
+import http from 'axios';
 import logo from './logo.svg';
 import './main.css';
 import { Header } from "./Header";
@@ -31,7 +31,7 @@ class App extends Component {
     return (
       <div>
         <Header changeData={this.componentDidMount} />
-        <TodoLists data={this.state.data}/>
+        <TodoLists data={this.state.data} changeData={this.componentDidMount}/>
       </div>
     );
   }
