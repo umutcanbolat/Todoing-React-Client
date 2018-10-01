@@ -30,8 +30,6 @@ export class TodoItem extends Component{
   }
 
   render(){
-    const icon_times = <i className="fa fa-times"></i>;
-
     const dependentItems = this.props.item.dependencies.map(dep => {
       return <DependentItem itemId={dep.dependentTo} />
 
@@ -69,7 +67,7 @@ export class TodoItem extends Component{
         <td onClick={this.changeItemStatus}>{this.props.item.itemDesc}</td>
         <td onClick={this.changeItemStatus}>{this.props.item.deadline}</td>
         <td>{this.props.item.dependencies.length > 0 ? show_deps_button : "-"}</td>
-        <td><button onClick={this.deleteItem} className="btn btn-outline-danger btn-sm">{icon_times}</button></td>
+        <td><button onClick={this.deleteItem} type="button" className="close">&times;</button></td>
       </tr>
     );
   }
