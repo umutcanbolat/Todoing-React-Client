@@ -2,3 +2,11 @@
   text-decoration: line-through;
   color: #af6969;
 }
+
+.expired {
+  color: #c6a21f;
+}
+
+footer {
+  margin-top: 100px;
+}

@@ -9,9 +9,16 @@ export class ListDetail extends Component{
     this.orderListData = this.orderListData.bind(this);
     this.handleOrderChange = this.handleOrderChange.bind(this);
     this.handleOrderSubmit = this.handleOrderSubmit.bind(this);
+    this.handleFilterStatusChange = this.handleFilterStatusChange.bind(this);
+    this.handleFilterSubmit = this.handleFilterSubmit.bind(this);
+    this.handleFilterNameChange = this.handleFilterNameChange.bind(this);
+    this.filterListData = this.filterListData.bind(this);
     this.state = {
       data: [],
-      orderBy: ""
+      nonFilteredData: [],
+      orderBy: "",
+      filterByStatus: "",
+      filterByName: ""
     };
   }
 
@@ -27,9 +34,15 @@ export class ListDetail extends Component{
       .then((response) => response.json())
         .then((responseJson) => {
           this.setState({
-            data: responseJson
-          });
-          this.orderListData();
+            data: responseJson,
+            nonFilteredData: responseJson
+          },
+          () => {
+              (() => { this.orderListData() })();
+              (() => { this.filterListData() })();
+          }
+
+        );
       });
 
     }
@@ -49,8 +62,6 @@ export class ListDetail extends Component{
         });
         break;
       case "deadline":
-      console.log("DATE: " + new Date("18-05-1996".replace( /(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")));
-      console.log(new Date("18-05-1998".replace( /(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")) > new Date("18-05-1997".replace( /(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")));
         sortedData = [].concat(this.state.data).sort((a, b) => new Date(a.deadline.replace( /(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")) > new Date(b.deadline.replace( /(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")));
         this.setState({
           data: sortedData
@@ -74,11 +85,63 @@ export class ListDetail extends Component{
 
   handleOrderChange(event){
     this.setState({
-    orderBy: event.target.value
-  });
+      orderBy: event.target.value
+    });
   }
 
+  filterListData(){
+    let filteredData = this.state.data;
+    if(this.state.filterByName !== ""){
+      let filterByName = this.state.filterByName;
+      filteredData = filteredData.filter(function(item){
+        var patt = new RegExp(filterByName.toLowerCase());
+        return patt.test(item.itemName);
+      });
+    }
 
+    switch (this.state.filterByStatus) {
+      case "completed":
+        filteredData = filteredData.filter(function(item){
+          return item.status;
+        });
+        break;
+      case "notCompleted":
+        filteredData = filteredData.filter(function(item){
+          return !item.status;
+        });
+        break;
+      case "expired":
+        filteredData = filteredData.filter(function(item){
+          return new Date(item.deadline.replace( /(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")) < new Date() && !item.status;
+        });
+        break;
+      default:
+        break;
+    }
+
+    this.setState({
+      data: filteredData
+    });
+  }
+
+  handleFilterSubmit(event){
+    event.preventDefault();
+    this.setState({
+      data: this.state.nonFilteredData
+      },
+      this.filterListData
+    );
+  }
+  handleFilterStatusChange(event){
+    this.setState({
+      filterByStatus: event.target.value
+    });
+  }
+  handleFilterNameChange(event){
+    this.setState({
+      filterByName: event.target.value
+    });
+  }
   deleteList(e){
     const deleteUrl = "http://localhost:8080/deleteTodoList";
     fetch(deleteUrl + '/' + e.target.id, {
@@ -87,86 +150,118 @@ export class ListDetail extends Component{
         if (response.ok) {
           this.props.changeData();
         }
-
       });
   }
-
   render(){
 
     let listId = this.props.list.listId;
     let listName = this.props.list.listName;
     const items = this.state.data.map(item => {
-      return <TodoItem item={item} changeData={this.updateListData} />
+      return <TodoItem key={item.itemId} item={item} changeData={this.updateListData} />
     });
 
     return (
 
       <div className="tab-pane fade show" id={"v-pills-" + listId} role="tabpanel" aria-labelledby={"v-pills-" + listId + "-tab"}>
         <h2>{listName}
-
-          <button id={listId} onClick={this.deleteList} className="btn btn-danger btn-sm pull-right">
-            <i className="fa fa-trash"></i> Delete List
-          </button>
-
-
-          <button type="button" className="btn btn-success btn-sm pull-right" data-toggle="modal" data-target={"#sortlist" + listId}>
-            <i className="fa fa-sort"></i> Sort List
-          </button>
-
-
+          <div className="btn-group pull-right" role="group" aria-label="Basic example">
+            <button type="button" className="btn btn-success btn-sm" data-toggle="modal" data-target={"#sortlist" + listId}>
+              <i className="fa fa-sort"></i> Sort List
+            </button>
+            <button type="button" className="btn btn-info btn-sm" data-toggle="modal" data-target={"#filterlist" + listId}>
+              <i className="fa fa-filter"></i> Filter List
+            </button>
+            <button id={listId} onClick={this.deleteList} className="btn btn-danger btn-sm">
+              <i className="fa fa-trash"></i> Delete List
+            </button>
+          </div>
           <form onSubmit={this.handleOrderSubmit} >
-
-          <div className="modal fade" id={"sortlist" + listId}>
-            <div className="modal-dialog modal-dialog-centered">
-              <div className="modal-content">
-
-                <div className="modal-header">
-                  <h5 className="modal-title">Sort By</h5>
-                  <button type="button" className="close" data-dismiss="modal">&times;</button>
+            <div className="modal fade" id={"sortlist" + listId}>
+              <div className="modal-dialog modal-dialog-centered">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title">Sort By</h5>
+                    <button type="button" className="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div className="modal-body">
+                    <div className="form-check">
+                      <label className="form-check-label" htmlFor={"radioName" + listId}>
+                        <input type="radio" className="form-check-input" id={"radioName" + listId} name="orderRadio" value="itemName" checked={this.state.orderBy === "itemName"} onChange={this.handleOrderChange}/><h6>Name</h6>
+                      </label>
+                    </div>
+                    <div className="form-check">
+                      <label className="form-check-label" htmlFor={"radioStatus" + listId}>
+                        <input type="radio" className="form-check-input" id={"radioStatus" + listId} name="orderRadio" value="status" checked={this.state.orderBy === "status"} onChange={this.handleOrderChange}/><h6>Status</h6>
+                      </label>
+                    </div>
+                    <div className="form-check">
+                      <label className="form-check-label" htmlFor={"radioDeadline" + listId}>
+                        <input type="radio" className="form-check-input" id={"radioDeadline" + listId} name="orderRadio" value="deadline" checked={this.state.orderBy === "deadline"} onChange={this.handleOrderChange}/><h6>Deadline</h6>
+                      </label>
+                    </div>
+                    <div className="form-check">
+                      <label className="form-check-label" htmlFor={"radioCrateDate" + listId}>
+                        <input type="radio" className="form-check-input" id={"radioCrateDate" + listId} name="orderRadio" value="createDate" checked={this.state.orderBy === "createDate"} onChange={this.handleOrderChange}/><h6>Create date</h6>
+                      </label>
+                    </div>
+                  </div>
+                  <div className="modal-footer">
+                    <button type="submit" className="btn btn-success btn-sm" >Sort List</button>
+                  </div>
                 </div>
-
-                <div className="modal-body">
-
-
-                  <div className="form-check">
-                    <label className="form-check-label" for={"radioName" + listId}>
-                      <input type="radio" className="form-check-input" id={"radioName" + listId} name="orderRadio" value="itemName" checked={this.state.orderBy === "itemName"} onChange={this.handleOrderChange}/>Name
-                    </label>
-                  </div>
-                  <div className="form-check">
-                    <label className="form-check-label" for={"radioStatus" + listId}>
-                      <input type="radio" className="form-check-input" id={"radioStatus" + listId} name="orderRadio" value="status" checked={this.state.orderBy === "status"} onChange={this.handleOrderChange}/>Status
-                    </label>
-                  </div>
-                  <div className="form-check">
-                    <label className="form-check-label" for={"radioDeadline" + listId}>
-                      <input type="radio" className="form-check-input" id={"radioDeadline" + listId} name="orderRadio" value="deadline" checked={this.state.orderBy === "deadline"} onChange={this.handleOrderChange}/>Deadline
-                    </label>
-                  </div>
-                  <div className="form-check">
-                    <label className="form-check-label" for={"radioCrateDate" + listId}>
-                      <input type="radio" className="form-check-input" id={"radioCrateDate" + listId} name="orderRadio" value="createDate" checked={this.state.orderBy === "createDate"} onChange={this.handleOrderChange}/>Create Date
-                    </label>
-                  </div>
-
-
-
-
-                </div>
-
-                <div className="modal-footer">
-                  <button type="submit" className="btn btn-success btn-sm" >Sort List</button>
-                </div>
-
               </div>
             </div>
-          </div>
           </form>
 
+          <form onSubmit={this.handleFilterSubmit} >
+            <div className="modal fade" id={"filterlist" + listId}>
+              <div className="modal-dialog modal-dialog-centered">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title">Filter</h5>
+                    <button type="button" className="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div className="modal-body">
+                    <div className="row">
+                    <div className="col-sm-6">
+                    <h5>Filter by status:</h5>
+                    <div className="form-check">
+                      <label className="form-check-label" htmlFor={"radioCompleted" + listId}>
+                        <input type="radio" className="form-check-input" id={"radioCompleted" + listId} name="filterStatus" value="completed" checked={this.state.filterByStatus === "completed"} onChange={this.handleFilterStatusChange}/><h6>Completed</h6>
+                      </label>
+                    </div>
+                    <div className="form-check">
+                      <label className="form-check-label" htmlFor={"radioNotCompleted" + listId}>
+                        <input type="radio" className="form-check-input" id={"radioNotCompleted" + listId} name="filterStatus" value="notCompleted" checked={this.state.filterByStatus === "notCompleted"} onChange={this.handleFilterStatusChange}/><h6>Not Completed</h6>
+                      </label>
+                    </div>
+                    <div className="form-check">
+                      <label className="form-check-label" htmlFor={"radioExpired" + listId}>
+                        <input type="radio" className="form-check-input" id={"radioExpired" + listId} name="filterStatus" value="expired" checked={this.state.filterByStatus === "expired"} onChange={this.handleFilterStatusChange}/><h6>Expired</h6>
+                      </label>
+                    </div>
+                    <div className="form-check">
+                      <label className="form-check-label" htmlFor={"radioNone" + listId}>
+                        <input type="radio" className="form-check-input" id={"radioNone" + listId} name="filterStatus" value="" checked={this.state.filterByStatus === ""} onChange={this.handleFilterStatusChange}/><h6>None</h6>
+                      </label>
+                    </div>
+                    <br/>
+                    </div>
+                    <div className="col-sm-6">
+                    <h5>Filter by name:</h5>
+                    <input className="form-control form-control-sm" type="text" placeholder="item name" value={this.state.filterByName} onChange={this.handleFilterNameChange}/>
+                    </div>
+                    </div>
+                  </div>
+                  <div className="modal-footer">
+                    <button type="submit" className="btn btn-info btn-sm">Filter List</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
         </h2>
-        <p>Click on the items to mark them as done or undone</p>
-
-
+        <p>Click on the items to mark them as <b className="disabled">done</b> or <b>undone</b>. Set deadlines to see when items are <b className="expired">expired</b>.</p>
         <table className="table table-striped">
           <thead>
             <tr>
@@ -179,15 +274,10 @@ export class ListDetail extends Component{
           </thead>
           <tbody>
             {items}
-
-            </tbody>
-          </table>
-
+          </tbody>
+        </table>
         <AddItemForm listId={listId} changeData={this.updateListData} items={this.state.data}/>
-
       </div>
-
-
     );
   }
 }
@@ -231,7 +321,6 @@ class AddItemForm extends Component{
       }
     });
   }
-
   addDependency(itemId){
     const apiUrl = "http://localhost:8080/addDependency";
     var deps=this.state.dependencies;
@@ -268,33 +357,26 @@ class AddItemForm extends Component{
       }
     }
   }
-
   handleInputChange(e){
     const target = e.target;
       this.setState({
         [target.name]: target.value
       });
   }
-
   handleDepsChange(e){
     const target = e.target;
-
     var dependencies = [];
     for (var i = 0; i < target.options.length; i++) {
         if (target.options[i].selected) dependencies.push(target.options[i].value);
     }
-
     this.setState({
       dependencies: dependencies
     });
   }
-
   render(){
-
     const depItems = this.props.items.map(item => {
-      return <option value={item.itemId}>{item.itemName}</option>;
+      return <option key={item.itemId} value={item.itemId}>{item.itemName}</option>;
     });
-
     return(
       <form onSubmit={this.addItem}>
         <table className="table table-striped">
@@ -316,7 +398,7 @@ class AddItemForm extends Component{
                 <button type="button" className="btn btn-outline-primary  btn-sm" data-toggle="modal" data-target={"#addDependencyModal" + this.state.list}>
                   Add dependency
                 </button>
-                <div className="modal fade" id={"addDependencyModal" + this.state.list} tabindex="-1" role="dialog" aria-labelledby="Add Dependency" aria-hidden="true">
+                <div className="modal fade" id={"addDependencyModal" + this.state.list} role="dialog" aria-labelledby="Add Dependency" aria-hidden="true">
                   <div className="modal-dialog modal-dialog-centered" role="document">
                     <div className="modal-content">
                       <div className="modal-header">
@@ -326,6 +408,7 @@ class AddItemForm extends Component{
                         </button>
                       </div>
                       <div className="modal-body">
+                        <h6>Please select below the dependencies you want to add. You can use ctrl + click to choose multiple.</h6>
                         <select multiple value={this.state.dependencies} className="form-control" id="sel" onChange={this.handleDepsChange}>
                           {depItems}
                         </select>

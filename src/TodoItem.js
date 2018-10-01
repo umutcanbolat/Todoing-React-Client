@@ -6,7 +6,6 @@ export class TodoItem extends Component{
     this.deleteItem = this.deleteItem.bind(this);
     this.changeItemStatus = this.changeItemStatus.bind(this);
   }
-
   deleteItem(event){
     const deleteUrl = 'http://localhost:8080/deleteItemById';
     fetch(deleteUrl + '/' + this.props.item.itemId, {
@@ -17,7 +16,6 @@ export class TodoItem extends Component{
         }
       });
   }
-
   changeItemStatus(event){
     const updateUrl = 'http://localhost:8080/changeItemStatusById';
     fetch(updateUrl + '/' + this.props.item.itemId, {
@@ -28,19 +26,16 @@ export class TodoItem extends Component{
         }
       });
   }
-
   render(){
     const dependentItems = this.props.item.dependencies.map(dep => {
-      return <DependentItem itemId={dep.dependentTo} />
-
+      return <DependentItem key={dep.id} itemId={dep.dependentTo} />
     });
-
     var show_deps_button = (
       <div>
         <button type="button" className="btn btn-outline-primary  btn-sm" data-toggle="modal" data-target={"#showDependencyModal" + this.props.item.itemId}>
           Show dependencies
         </button>
-        <div className="modal fade" id={"showDependencyModal"  + this.props.item.itemId} tabindex="-1" role="dialog" aria-hidden="true">
+        <div className="modal fade" id={"showDependencyModal"  + this.props.item.itemId} role="dialog" aria-hidden="true">
           <div className="modal-dialog modal-dialog-centered" role="document">
             <div className="modal-content">
               <div className="modal-header">
@@ -61,8 +56,16 @@ export class TodoItem extends Component{
       </div>
     );
 
+    var status = "enabled";
+    if(this.props.item.status){
+      status = "disabled";
+    }else{
+      if(new Date(this.props.item.deadline.replace( /(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")) < new Date()){
+        status = "expired";
+      }
+    }
     return (
-      <tr className={this.props.item.status ? "disabled" : "umut"}>
+      <tr className={status}>
         <td onClick={this.changeItemStatus}>{this.props.item.itemName}</td>
         <td onClick={this.changeItemStatus}>{this.props.item.itemDesc}</td>
         <td onClick={this.changeItemStatus}>{this.props.item.deadline}</td>

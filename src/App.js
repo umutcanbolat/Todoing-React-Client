@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './main.css';
 import { Header } from "./Header";
 import { TodoLists } from "./TodoLists";
-
+import { Footer } from "./Footer";
 
 class App extends Component {
 
@@ -11,7 +11,6 @@ class App extends Component {
     this.state = {
       data: []
     };
-
     this.componentDidMount = this.componentDidMount.bind(this);
   }
 
@@ -23,8 +22,8 @@ class App extends Component {
         .then((responseJson) => {
           this.setState({
             data: responseJson
-          });
         });
+      });
   }
 
   render() {
@@ -32,6 +31,7 @@ class App extends Component {
       <div>
         <Header changeData={this.componentDidMount} />
         <TodoLists data={this.state.data} changeData={this.componentDidMount}/>
+        <Footer />
       </div>
     );
   }

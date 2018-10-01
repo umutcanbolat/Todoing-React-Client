@@ -34,13 +34,10 @@ class TodoListForm extends Component {
     var params = {
         listName: this.state.text
     };
-
     var formData = new FormData();
-
     for (var k in params) {
         formData.append(k, params[k]);
     }
-
     var request = {
         method: 'POST',
         body: formData
@@ -52,11 +49,7 @@ class TodoListForm extends Component {
         })
         this.props.changeData();
       }
-
     });
-
-
-
   }
 
   changeInput (e) {
