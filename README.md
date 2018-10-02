@@ -39,7 +39,12 @@ npm run
 
 ### For Windows
 
+Download nodejs from [https://nodejs.org/en/download/](https://nodejs.org/en/download/) and run the following commands in project directory:
 
+```sh
+npm install
+npm run
+```
 
 ## Screenshots
 - Main Page <br> <img src="https://user-images.githubusercontent.com/10065235/46321550-90608b00-c5ec-11e8-8295-ea3af781e605.png" width="720" height="405"> <br>
