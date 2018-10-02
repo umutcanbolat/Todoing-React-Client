@@ -39,7 +39,7 @@ npm run
 
 ### For Windows
 
-Download and install nodejs from [https://nodejs.org/en/download/](https://nodejs.org/en/download/) and run the following commands in project directory:
+Download and install nodejs from https://nodejs.org/en/download/ and run the following commands in project directory:
 
 ```sh
 npm install
@@ -55,4 +55,4 @@ npm run
 Design and programming by [Umut Canbolat](https://github.com/umutcanbolat).
 
 ## License
-This project is licensed under the GNU General Public License v3.0 (GPL 3.0) - see the [LICENSE](LICENSE.md) file for details
+This project is licensed under the GNU General Public License v3.0 (GPL 3.0) - see the [LICENSE](LICENSE) file for details
