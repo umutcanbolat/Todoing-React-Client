@@ -1,9 +1,8 @@
 {
-  "name": "asd",
+  "name": "todoing",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "axios": "^0.17.1",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-scripts": "1.1.5"
@@ -13,5 +12,22 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  }
+  },
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).",
+  "main": "index.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/umutcanbolat/Todoing-React-Client.git"
+  },
+  "keywords": [
+    "to-do",
+    "react"
+  ],
+  "author": "Umut Canbolat",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/umutcanbolat/Todoing-React-Client/issues"
+  },
+  "homepage": "https://github.com/umutcanbolat/Todoing-React-Client#readme"
 }
