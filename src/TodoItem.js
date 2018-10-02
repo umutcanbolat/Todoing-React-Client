@@ -7,7 +7,7 @@ export class TodoItem extends Component{
     this.changeItemStatus = this.changeItemStatus.bind(this);
   }
   deleteItem(event){
-    const deleteUrl = 'http://localhost:8080/deleteItemById';
+    const deleteUrl = window.apiUrl + '/deleteItemById';
     fetch(deleteUrl + '/' + this.props.item.itemId, {
       method: 'delete'
     }).then(response => {
@@ -17,7 +17,7 @@ export class TodoItem extends Component{
       });
   }
   changeItemStatus(event){
-    const updateUrl = 'http://localhost:8080/changeItemStatusById';
+    const updateUrl = window.apiUrl + '/changeItemStatusById';
     fetch(updateUrl + '/' + this.props.item.itemId, {
       method: 'put'
     }).then(response => {
@@ -90,7 +90,7 @@ class DependentItem extends Component{
   }
 
   getDependentDetails(){
-    const apiUrl = 'http://localhost:8080/getItemById?itemId=' + this.props.itemId;
+    const apiUrl = window.apiUrl + '/getItemById?itemId=' + this.props.itemId;
     fetch(apiUrl)
       .then((response) => response.json())
         .then((responseJson) => {

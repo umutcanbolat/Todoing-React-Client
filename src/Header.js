@@ -28,7 +28,7 @@ class TodoListForm extends Component {
 
 
   addList (e) {
-    const apiUrl = 'http://localhost:8080/addTodoList/';
+    const apiUrl = window.apiUrl + '/addTodoList/';
     e.preventDefault();
 
     var params = {

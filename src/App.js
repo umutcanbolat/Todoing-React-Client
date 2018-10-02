@@ -4,6 +4,8 @@ import { Header } from "./Header";
 import { TodoLists } from "./TodoLists";
 import { Footer } from "./Footer";
 
+window.apiUrl = "http://localhost:8080";
+
 class App extends Component {
 
   constructor(props){
@@ -15,7 +17,7 @@ class App extends Component {
   }
 
   componentDidMount () {
-    const apiUrl = 'http://localhost:8080/getTodoListAll/';
+    const apiUrl = window.apiUrl + '/getTodoListAll/';
 
     fetch(apiUrl)
       .then((response) => response.json())

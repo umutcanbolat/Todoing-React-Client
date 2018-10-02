@@ -28,7 +28,7 @@ export class ListDetail extends Component{
     }
 
   updateListData (listId){
-    const apiUrl = 'http://localhost:8080/getAllItemsByListId';
+    const apiUrl = window.apiUrl + '/getAllItemsByListId';
 
     fetch(apiUrl + "/" +listId)
       .then((response) => response.json())
@@ -143,7 +143,7 @@ export class ListDetail extends Component{
     });
   }
   deleteList(e){
-    const deleteUrl = "http://localhost:8080/deleteTodoList";
+    const deleteUrl = window.apiUrl + "/deleteTodoList";
     fetch(deleteUrl + '/' + e.target.id, {
       method: 'delete'
     }).then(response => {
@@ -300,7 +300,7 @@ class AddItemForm extends Component{
   }
 
   addItem(e){
-    const apiUrl = "http://localhost:8080/addItem";
+    const apiUrl = window.apiUrl + "/addItem";
     e.preventDefault();
 
     var params = this.state;
@@ -322,7 +322,7 @@ class AddItemForm extends Component{
     });
   }
   addDependency(itemId){
-    const apiUrl = "http://localhost:8080/addDependency";
+    const apiUrl = window.apiUrl + "/addDependency";
     var deps=this.state.dependencies;
     if(deps.length < 1){
       this.setState({
