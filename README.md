@@ -34,7 +34,7 @@ cd into the application directory and run the commands below. The browser will o
 
 ```sh
 npm install
-npm run
+npm start
 ```
 
 ### For Windows
@@ -43,7 +43,7 @@ Download and install nodejs from https://nodejs.org/en/download/ and run the fol
 
 ```sh
 npm install
-npm run
+npm start
 ```
 
 ## Screenshots
