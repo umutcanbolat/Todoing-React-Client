@@ -4,7 +4,7 @@ import { Header } from "./Header";
 import { TodoLists } from "./TodoLists";
 import { Footer } from "./Footer";
 
-window.apiUrl = "http://localhost:8080";
+window.apiUrl = "https://todoing-rest-api.herokuapp.com";
 
 class App extends Component {
 
